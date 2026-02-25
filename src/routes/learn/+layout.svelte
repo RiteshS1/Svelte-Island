@@ -34,7 +34,7 @@
 <div class="relative h-screen w-screen overflow-hidden bg-gradient-to-b from-sky-200 via-sky-100 to-white">
 	<!-- Layer 0: 3D canvas only when not mobile -->
 	{#if browser && show3D && ClassroomScene}
-		<svelte:component this={ClassroomScene} />
+		<ClassroomScene />
 	{/if}
 
 	<!-- Layer 1: Sidebar (z-20) -->
