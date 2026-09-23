@@ -3,7 +3,8 @@
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { Button } from '$lib/components/ui/button';
-	import { BookOpen, Code2, Trophy, Github, Twitter, Globe } from 'lucide-svelte';
+	import Marquee from '$lib/components/Marquee.svelte';
+	import { BookOpen, Code2, Trophy, Github, Globe, Menu, X, Snowflake } from 'lucide-svelte';
 
 	gsap.registerPlugin(ScrollTrigger);
 
@@ -18,6 +19,18 @@
 	let whySection: HTMLElement;
 	let faqSection: HTMLElement;
 	let recSection: HTMLElement;
+	let mobileNavOpen = $state(false);
+
+	const navLinks = [
+		{ href: '#about', label: 'About' },
+		{ href: '#why-svelte', label: 'Why Svelte' },
+		{ href: '#recommendations', label: 'What people say' },
+		{ href: '#faqs', label: 'FAQs' }
+	];
+
+	function closeMobileNav() {
+		mobileNavOpen = false;
+	}
 
 	const codeLines = `let count = $state(0);
 <button onclick={() => count++}>
@@ -25,7 +38,16 @@
 </button>`;
 	let displayedCode = $state('');
 
-	const trustedStack = ['Svelte 5', 'Threlte', 'Tailwind', 'Vite', 'TypeScript'];
+	const trustedBy = [
+		'Apple',
+		'Spotify',
+		'IKEA',
+		'The New York Times',
+		'Brave',
+		'Rakuten',
+		'Philips',
+		'& more'
+	];
 
 	const whyPoints = [
 		{
@@ -95,8 +117,6 @@
 			date: 'Sept 28, 2021'
 		}
 	];
-
-	const marqueeItems = [...recommendations, ...recommendations];
 
 	onMount(() => {
 		gsap.from([heroHeading, heroSub], {
@@ -188,53 +208,122 @@
 	class="relative min-h-screen overflow-x-hidden bg-gradient-to-b from-sky-300 via-sky-100 to-white"
 	style="font-family: 'Quicksand', sans-serif;"
 >
-	<!-- Hero -->
-	<section
-		class="relative mx-auto flex min-h-[85vh] max-w-6xl flex-col items-center justify-center px-6 pt-20 md:flex-row md:items-center md:gap-12"
-	>
-		<div class="flex flex-1 flex-col text-center md:text-left">
-			<p class="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-[#ff3e00]">Svelte-Island</p>
-			<h1
-				bind:this={heroHeading}
-				class="text-4xl font-bold tracking-tight text-slate-800 sm:text-5xl md:text-6xl lg:text-7xl"
+	<!-- Hero (nav lives only here — no sticky/full-page chrome) -->
+	<section class="relative min-h-[95vh]">
+		<header class="absolute inset-x-0 top-0 z-20">
+			<nav
+				class="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-5"
+				aria-label="Primary"
 			>
-				Learn Svelte 5.<br />The Cool Way.
-			</h1>
-			<p bind:this={heroSub} class="mt-4 text-lg text-slate-600 md:text-xl">
-				Runes, islands, and a penguin teacher. Gamified lessons on the frosty side of the web.
-			</p>
-			<div bind:this={ctaBtn} class="mt-8">
-				<a href="/login">
-					<Button
-						class="rounded-xl bg-[#ff3e00] px-8 py-6 text-lg font-semibold text-white shadow-lg shadow-orange-200 hover:bg-[#ff3e00]/90"
+				<a
+					href="/"
+					class="flex shrink-0 items-center gap-2.5 font-bold text-slate-800"
+					aria-label="Svelte-Island home"
+				>
+					<span
+						class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ff3e00] text-white"
+						aria-hidden="true"
 					>
-						Start Expedition
-					</Button>
+						<Snowflake class="h-4 w-4" />
+					</span>
+					<span class="tracking-tight">Svelte-Island</span>
 				</a>
-			</div>
-		</div>
+
+				<div class="hidden items-center gap-8 md:flex">
+					{#each navLinks as link}
+						<a
+							href={link.href}
+							class="text-sm font-medium text-slate-700 transition-colors hover:text-slate-900"
+						>
+							{link.label}
+						</a>
+					{/each}
+				</div>
+
+				<button
+					type="button"
+					class="inline-flex items-center justify-center rounded-lg p-2 text-slate-800 md:hidden"
+					aria-expanded={mobileNavOpen}
+					aria-controls="landing-mobile-nav"
+					aria-label={mobileNavOpen ? 'Close menu' : 'Open menu'}
+					onclick={() => (mobileNavOpen = !mobileNavOpen)}
+				>
+					{#if mobileNavOpen}
+						<X class="h-5 w-5" />
+					{:else}
+						<Menu class="h-5 w-5" />
+					{/if}
+				</button>
+			</nav>
+
+			{#if mobileNavOpen}
+				<div id="landing-mobile-nav" class="px-6 pb-4 md:hidden">
+					<ul class="flex flex-col gap-3 rounded-xl border border-white/40 bg-white/50 px-4 py-3 backdrop-blur-sm">
+						{#each navLinks as link}
+							<li>
+								<a
+									href={link.href}
+									class="block py-1.5 text-sm font-medium text-slate-800"
+									onclick={closeMobileNav}
+								>
+									{link.label}
+								</a>
+							</li>
+						{/each}
+					</ul>
+				</div>
+			{/if}
+		</header>
+
 		<div
-			bind:this={codeBlock}
-			class="mt-12 w-full max-w-md shrink-0 md:mt-0 md:max-w-lg rounded-2xl border border-white/50 bg-white/40 p-6 font-mono text-sm text-slate-800 shadow-lg shadow-sky-100/20 backdrop-blur-xl"
+			class="relative mx-auto flex min-h-[85vh] max-w-6xl flex-col items-center justify-center px-6 pt-24 md:flex-row md:items-center md:gap-12 md:pt-20"
 		>
-			<div class="mb-2 flex gap-2">
-				<span class="h-3 w-3 rounded-full bg-red-400/80"></span>
-				<span class="h-3 w-3 rounded-full bg-amber-400/80"></span>
-				<span class="h-3 w-3 rounded-full bg-emerald-400/80"></span>
+			<div class="flex flex-1 flex-col text-center md:text-left">
+				<h1
+					bind:this={heroHeading}
+					class="text-4xl font-bold tracking-tight text-slate-800 sm:text-5xl md:text-6xl lg:text-7xl"
+				>
+					Learn Svelte 5.<br />The Cool Way.
+				</h1>
+				<p bind:this={heroSub} class="mt-4 text-lg text-slate-600 md:text-xl">
+					Runes, islands, and a penguin teacher. Gamified lessons on the frosty side of the web.
+				</p>
+				<div bind:this={ctaBtn} class="mt-8">
+					<a href="/login">
+						<Button
+							class="rounded-xl bg-[#ff3e00] px-8 py-6 text-lg font-semibold text-white shadow-lg shadow-orange-200 hover:bg-[#ff3e00]/90"
+						>
+							Start Expedition
+						</Button>
+					</a>
+				</div>
 			</div>
-			<pre class="whitespace-pre text-left overflow-x-auto"><code>{displayedCode}<span class="animate-pulse">|</span></code></pre>
+			<div
+				bind:this={codeBlock}
+				class="mt-12 w-full max-w-md shrink-0 md:mt-0 md:max-w-lg rounded-2xl border border-white/50 bg-white/40 p-6 font-mono text-sm text-slate-800 shadow-lg shadow-sky-100/20 backdrop-blur-xl"
+			>
+				<div class="mb-2 flex gap-2">
+					<span class="h-3 w-3 rounded-full bg-red-400/80"></span>
+					<span class="h-3 w-3 rounded-full bg-amber-400/80"></span>
+					<span class="h-3 w-3 rounded-full bg-emerald-400/80"></span>
+				</div>
+				<pre class="whitespace-pre text-left overflow-x-auto"><code>{displayedCode}<span class="animate-pulse">|</span></code></pre>
+			</div>
 		</div>
 	</section>
 
-	<!-- Trusted Stack Ticker -->
-	<section class="relative border-t border-white/30 bg-white/20 py-8">
+	<!-- Trusted by -->
+	<section class="relative border-t border-white/30 bg-white/20 py-10">
+		<p class="mb-6 text-center text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+			Trusted by teams at
+		</p>
 		<div
 			bind:this={trustedTicker}
-			class="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-8 px-6"
+			class="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-x-10 gap-y-4 px-6"
 		>
-			{#each trustedStack as name}
+			{#each trustedBy as name}
 				<span
-					class="text-lg font-medium text-slate-600 opacity-60 grayscale select-none"
+					class="select-none text-lg font-semibold tracking-tight text-slate-500/80 sm:text-xl"
 					style="font-family: 'Quicksand', sans-serif;"
 				>
 					{name}
@@ -243,13 +332,13 @@
 		</div>
 	</section>
 
-	<!-- How it Works -->
-	<section class="relative mx-auto max-w-6xl px-6 py-24">
+	<!-- About -->
+	<section id="about" class="relative mx-auto max-w-6xl scroll-mt-20 px-6 py-48">
 		<h2
 			class="mb-12 text-center text-3xl font-bold text-slate-800"
 			style="font-family: 'Quicksand', sans-serif;"
 		>
-			How Svelte-Island Works
+			What is Svelte-Island ?
 		</h2>
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
 			<div
@@ -263,7 +352,7 @@
 					<h3 class="text-xl font-bold text-slate-800">1. Learn Concepts</h3>
 				</div>
 				<p class="mt-3 text-slate-600">
-					Bite-sized theory on Runes & Reactivity.
+					A gamified experience to learn Svelte 5 with a penguin teacher.
 				</p>
 			</div>
 			<div
@@ -298,7 +387,11 @@
 	</section>
 
 	<!-- Why Svelte? -->
-	<section bind:this={whySection} class="relative border-t border-white/40 bg-white/30 py-24">
+	<section
+		id="why-svelte"
+		bind:this={whySection}
+		class="relative scroll-mt-20 border-t border-white/40 bg-white/30 py-24"
+	>
 		<div class="mx-auto max-w-3xl px-6">
 			<h2 class="text-center text-3xl font-bold text-slate-800">Why Svelte?</h2>
 			<p class="mx-auto mt-3 max-w-xl text-center text-slate-600">
@@ -318,17 +411,62 @@
 		</div>
 	</section>
 
+	<!-- What people say — infinite horizontal marquee -->
+	<section
+		id="recommendations"
+		bind:this={recSection}
+		class="relative scroll-mt-20 overflow-hidden border-t border-white/40 bg-sky-50/50 py-24"
+	>
+		<div class="mx-auto max-w-3xl px-6">
+			<h2 class="text-center text-3xl font-bold text-slate-800">What people say</h2>
+			<p class="mx-auto mt-3 max-w-xl text-center text-slate-600">
+				Real posts from X — hover a card to pause.
+			</p>
+		</div>
+		<div class="mt-12">
+			<Marquee durationSec={48} label="What people say about Svelte">
+				{#each recommendations as rec (rec.href)}
+					<a
+						href={rec.href}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="flex w-[min(85vw,22rem)] shrink-0 flex-col rounded-2xl border border-white/10 bg-slate-900/85 p-5 text-left text-slate-100 shadow-lg backdrop-blur-md transition-colors hover:border-[#ff3e00]/40 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff3e00]"
+					>
+						<div class="mb-3 flex items-start justify-between gap-3">
+							<div class="min-w-0">
+								<p class="truncate font-semibold text-white">{rec.who}</p>
+								<p class="truncate text-sm text-slate-400">{rec.handle}</p>
+							</div>
+							<svg
+								class="h-4 w-4 shrink-0 text-slate-400"
+								viewBox="0 0 24 24"
+								fill="currentColor"
+								aria-hidden="true"
+							>
+								<path
+									d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+								/>
+							</svg>
+						</div>
+						<p class="line-clamp-6 flex-1 text-sm leading-relaxed text-slate-200">
+							“{rec.quote}”
+						</p>
+						<p class="mt-4 text-xs text-slate-500">{rec.date}</p>
+					</a>
+				{/each}
+			</Marquee>
+		</div>
+	</section>
+
 	<!-- FAQs -->
-	<section bind:this={faqSection} class="relative mx-auto max-w-3xl px-6 py-24">
+	<section id="faqs" bind:this={faqSection} class="relative mx-auto max-w-3xl scroll-mt-20 px-6 py-32">
 		<h2 class="text-center text-3xl font-bold text-slate-800">FAQs</h2>
 		<p class="mx-auto mt-3 max-w-xl text-center text-slate-600">
 			Quick answers before you start the expedition.
 		</p>
 		<div class="mt-10 space-y-3">
 			{#each faqs as item}
-				<details
-					class="group border-b border-slate-300/60 py-4 open:pb-5"
-				>
+				<details class="group border-b border-slate-300/60 py-4 open:pb-5">
 					<summary
 						class="cursor-pointer list-none text-lg font-semibold text-slate-800 marker:content-none [&::-webkit-details-marker]:hidden"
 					>
@@ -340,43 +478,6 @@
 					<p class="mt-3 text-slate-600">{item.a}</p>
 				</details>
 			{/each}
-		</div>
-	</section>
-
-	<!-- Recommendations — infinite horizontal marquee -->
-	<section bind:this={recSection} class="relative overflow-hidden border-t border-white/40 bg-sky-50/50 py-24">
-		<div class="mx-auto max-w-3xl px-6">
-			<h2 class="text-center text-3xl font-bold text-slate-800">Why people recommend Svelte</h2>
-			<p class="mx-auto mt-3 max-w-xl text-center text-slate-600">
-				Real posts from X — hover to pause the scroll.
-			</p>
-		</div>
-		<div class="mt-12 w-full overflow-hidden">
-			<div
-				class="animate-marquee flex w-max gap-4 px-4 hover:[animation-play-state:paused] active:[animation-play-state:paused]"
-				aria-label="Recommended posts about Svelte"
-			>
-				{#each marqueeItems as rec, i (i)}
-					<a
-						href={rec.href}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="flex w-[min(85vw,22rem)] shrink-0 flex-col rounded-2xl border border-white/10 bg-slate-900/85 p-5 text-left text-slate-100 shadow-lg backdrop-blur-md transition-colors hover:border-[#ff3e00]/40 hover:bg-slate-900"
-					>
-						<div class="mb-3 flex items-start justify-between gap-3">
-							<div class="min-w-0">
-								<p class="truncate font-semibold text-white">{rec.who}</p>
-								<p class="truncate text-sm text-slate-400">{rec.handle}</p>
-							</div>
-							<Twitter class="h-5 w-5 shrink-0 text-slate-400" aria-hidden="true" />
-						</div>
-						<p class="line-clamp-6 flex-1 text-sm leading-relaxed text-slate-200">
-							“{rec.quote}”
-						</p>
-						<p class="mt-4 text-xs text-slate-500">{rec.date}</p>
-					</a>
-				{/each}
-			</div>
 		</div>
 	</section>
 
@@ -407,9 +508,13 @@
 					target="_blank"
 					rel="noopener noreferrer"
 					class="text-slate-400 transition-colors hover:text-white"
-					aria-label="Twitter / X"
+					aria-label="X"
 				>
-					<Twitter class="h-5 w-5" />
+					<svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<path
+							d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+						/>
+					</svg>
 				</a>
 				<a
 					href="https://riteshh.in/"

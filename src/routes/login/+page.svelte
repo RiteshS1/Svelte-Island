@@ -48,7 +48,13 @@
 			class="text-center font-bold text-white/95 drop-shadow-lg"
 			style="font-family: 'Quicksand', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem);"
 		>
-			Svelte-Island
+			<a
+				href="/"
+				class="text-inherit no-underline transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+				aria-label="Svelte-Island — back to home"
+			>
+				Svelte-Island
+			</a>
 		</div>
 		<p class="mt-4 text-sm text-white/70">Your expedition awaits.</p>
 	</div>
