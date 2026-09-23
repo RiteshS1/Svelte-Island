@@ -3,17 +3,18 @@
 	import loader from '@monaco-editor/loader';
 
 	type Props = {
+		/** Controlled source text — parent owns the content (do not use $bindable here). */
 		value?: string;
 		readOnly?: boolean;
 		language?: string;
 		class?: string;
 		height?: string;
-		/** When editable, use bind:value or this callback */
+		/** When editable, called after the user edits the buffer */
 		onValueChange?: (value: string) => void;
 	};
 
 	let {
-		value = $bindable(''),
+		value = '',
 		readOnly = false,
 		language = 'svelte',
 		class: className = '',
@@ -24,6 +25,8 @@
 	let container: HTMLDivElement;
 	let editor: import('monaco-editor').editor.IStandaloneCodeEditor | null = null;
 	let monaco: typeof import('monaco-editor') | null = null;
+	/** Skip echoing editor→parent while we push a new parent value into Monaco */
+	let applyingExternalValue = false;
 
 	onMount(async () => {
 		const monacoInstance = await loader.init();
@@ -31,7 +34,7 @@
 		if (!container) return;
 
 		editor = monacoInstance.editor.create(container, {
-			value,
+			value: value ?? '',
 			language: language === 'svelte' ? 'html' : language,
 			readOnly,
 			theme: 'vs-dark',
@@ -46,18 +49,24 @@
 		});
 
 		const ed = editor;
-		if (!readOnly && ed && (onValueChange || true)) {
+		if (!readOnly && ed) {
 			ed.onDidChangeModelContent(() => {
+				if (applyingExternalValue) return;
 				const v = ed.getValue() ?? '';
-				value = v;
 				onValueChange?.(v);
 			});
 		}
 	});
 
+	/** Keep Monaco buffer in sync when the parent lesson/snippet changes */
 	$effect(() => {
-		if (!editor || editor.getValue() === value) return;
-		editor.setValue(value);
+		const next = value ?? '';
+		const ed = editor;
+		if (!ed) return;
+		if (ed.getValue() === next) return;
+		applyingExternalValue = true;
+		ed.setValue(next);
+		applyingExternalValue = false;
 	});
 
 	$effect(() => {

@@ -64,26 +64,39 @@
 	const recommendations = [
 		{
 			quote:
-				'We genuinely believe that Svelte offers a better way of building user interfaces, and we’re excited to see what you build.',
-			who: 'Rich Harris',
-			role: 'Creator of Svelte',
-			href: 'https://svelte.dev/blog/whats-new-in-svelte-may-2023'
+				"The *real* touted advantage of Svelte's direct-to-JS compilation shouldn't be 'it's faster', but instead should be this glorious advantage: In Svelte, you can just use all of your existing JavaScript code anywhere you want, more naturally, without BEING OWNED BY THE VIRTUAL DOM.",
+			who: 'Zed A. Shaw',
+			handle: '@lzsthw',
+			href: 'https://x.com/lzsthw/status/1139706194304655360',
+			date: 'Jun 15, 2019'
 		},
 		{
 			quote:
-				'Svelte feels like writing the HTML and JavaScript you already know—then the compiler does the hard work.',
-			who: 'Community consensus',
-			role: 'Summarized from public Svelte advocacy',
-			href: 'https://svelte.dev/'
+				'Been using @sveltejs for a few projects lately, it\'s quite a nice alternative to React, fewer gotchas and complexity and Codex handles it really well.',
+			who: 'Peter Steinberger',
+			handle: '@steipete',
+			href: 'https://x.com/steipete/status/2055402519841411165',
+			date: 'May 15, 2026'
 		},
 		{
 			quote:
-				'If you’re tired of shipping megabytes of framework runtime, try a compiler that disappears at build time.',
-			who: 'Svelte docs ethos',
-			role: 'svelte.dev',
-			href: 'https://svelte.dev/docs/svelte/overview'
+				'👍🏽@Sveltejs has a dirt-simple compiler API - literally svelte.compile(source) - but most apps need a bundler solution! This thread digs through rollup-plugin-svelte today - only 338 lines of code!',
+			who: 'swyx',
+			handle: '@swyx',
+			href: 'https://x.com/swyx/status/1223334283693084672',
+			date: 'Jan 31, 2020'
+		},
+		{
+			quote:
+				"Svelte is the easiest JavaScript framework to learn. Recently, it was ranked #1 as the Most Loved Framework in StackOverflow's Survey. Let's find out why. Svelte Thread.",
+			who: 'Kevin',
+			handle: '@kvncnls',
+			href: 'https://x.com/kvncnls/status/1442814601448411142',
+			date: 'Sept 28, 2021'
 		}
 	];
+
+	const marqueeItems = [...recommendations, ...recommendations];
 
 	onMount(() => {
 		gsap.from([heroHeading, heroSub], {
@@ -330,30 +343,38 @@
 		</div>
 	</section>
 
-	<!-- Recommendations -->
-	<section bind:this={recSection} class="relative border-t border-white/40 bg-sky-50/50 py-24">
+	<!-- Recommendations — infinite horizontal marquee -->
+	<section bind:this={recSection} class="relative overflow-hidden border-t border-white/40 bg-sky-50/50 py-24">
 		<div class="mx-auto max-w-3xl px-6">
 			<h2 class="text-center text-3xl font-bold text-slate-800">Why people recommend Svelte</h2>
 			<p class="mx-auto mt-3 max-w-xl text-center text-slate-600">
-				Attributed quotes from public Svelte sources—not fake embeds.
+				Real posts from X — hover to pause the scroll.
 			</p>
-			<div class="mt-12 space-y-10">
-				{#each recommendations as rec}
-					<blockquote class="border-l-2 border-[#ff3e00]/70 pl-5">
-						<p class="text-lg leading-relaxed text-slate-700">“{rec.quote}”</p>
-						<footer class="mt-3 text-sm text-slate-500">
-							— {rec.who}
-							<span class="text-slate-400"> · {rec.role}</span>
-							<a
-								href={rec.href}
-								target="_blank"
-								rel="noopener noreferrer"
-								class="ml-2 text-[#ff3e00] underline-offset-2 hover:underline"
-							>
-								Source
-							</a>
-						</footer>
-					</blockquote>
+		</div>
+		<div class="mt-12 w-full overflow-hidden">
+			<div
+				class="animate-marquee flex w-max gap-4 px-4 hover:[animation-play-state:paused] active:[animation-play-state:paused]"
+				aria-label="Recommended posts about Svelte"
+			>
+				{#each marqueeItems as rec, i (i)}
+					<a
+						href={rec.href}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="flex w-[min(85vw,22rem)] shrink-0 flex-col rounded-2xl border border-white/10 bg-slate-900/85 p-5 text-left text-slate-100 shadow-lg backdrop-blur-md transition-colors hover:border-[#ff3e00]/40 hover:bg-slate-900"
+					>
+						<div class="mb-3 flex items-start justify-between gap-3">
+							<div class="min-w-0">
+								<p class="truncate font-semibold text-white">{rec.who}</p>
+								<p class="truncate text-sm text-slate-400">{rec.handle}</p>
+							</div>
+							<Twitter class="h-5 w-5 shrink-0 text-slate-400" aria-hidden="true" />
+						</div>
+						<p class="line-clamp-6 flex-1 text-sm leading-relaxed text-slate-200">
+							“{rec.quote}”
+						</p>
+						<p class="mt-4 text-xs text-slate-500">{rec.date}</p>
+					</a>
 				{/each}
 			</div>
 		</div>

@@ -140,22 +140,31 @@
 				{@html htmlContent}
 			</article>
 
-			<!-- Starter code (reusable CodeViewer, read-only for theory) -->
+			<!-- Starter code: remount Monaco per lesson so each lesson shows its own initialCode -->
 			{#if lesson.initialCode?.trim()}
 				<div class="mt-6">
 					<h3 class="mb-2 text-sm font-semibold text-slate-700">Starter code</h3>
-					<CodeViewer value={lesson.initialCode} readOnly={true} language="svelte" height="min-h-48" />
+					{#key lesson.slug}
+						<CodeViewer
+							value={lesson.initialCode}
+							readOnly={true}
+							language="svelte"
+							height="min-h-48"
+						/>
+					{/key}
 				</div>
 			{/if}
 
-			<!-- Footer: Start Challenge (checkpoints only) -->
+			<!-- Footer: Start / Retake Challenge (checkpoints only) -->
 			{#if lesson.type === 'checkpoint' && testForCheckpoint}
 				<div class="mt-8 border-t border-slate-200/80 pt-6">
 					<a href={challengeHref}>
 						<Button
 							class="w-full bg-[#ff3e00] py-6 text-base font-semibold text-white hover:bg-[#ff3e00]/90"
 						>
-							Start Challenge
+							{game.passedTests.includes(testForCheckpoint.id)
+								? 'Retake the Challenge'
+								: 'Start Challenge'}
 						</Button>
 					</a>
 				</div>

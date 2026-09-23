@@ -10,7 +10,7 @@
 
 {#if game.loaderVisible}
 	<div
-		class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-900/70 backdrop-blur-sm"
+		class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-blue-400/70 "
 		transition:fly={{ y: 20, duration: 300 }}
 	>
 		<div
