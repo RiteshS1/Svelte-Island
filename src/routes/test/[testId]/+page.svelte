@@ -10,6 +10,7 @@
 	import { LOADER_SUCCESS_DURATION_MS } from '$lib/constants/loader';
 	import { Button } from '$lib/components/ui/button';
 	import type { Question, Test } from '$lib/data/tests';
+	import { validateCodeAnswer } from '$lib/utils/codeValidator';
 
 	const RUNES_MASTERED = ['$state', '$derived', '$effect', '$props'] as const;
 
@@ -23,11 +24,17 @@
 	$effect(() => {
 		if (!test) return;
 		const passed = game.passedTests;
-		if (test.moduleId >= 2 && !passed.includes(`test-${test.moduleId - 1}`)) {
+		// Module tests N (N>=2) require the previous module test
+		if (
+			test.id !== 'test-master' &&
+			test.moduleId >= 2 &&
+			!passed.includes(`test-${test.moduleId - 1}`)
+		) {
 			goto('/dashboard');
 			return;
 		}
-		if (test.id === 'test-master' && !passed.includes('test-5')) {
+		// Master test: checkpoint-5 unlocks after test-4 and links here — do NOT require test-5
+		if (test.id === 'test-master' && !passed.includes('test-4')) {
 			goto('/dashboard');
 		}
 	});
@@ -41,6 +48,8 @@
 	/** After Finish when all answers are correct */
 	let passedSummary = $state(false);
 	let islandMastered = $state(false);
+	/** Semantic / syntax feedback for code questions */
+	let codeFeedback = $state<string | null>(null);
 
 	// Reset state when switching to a different test (e.g. URL change)
 	$effect(() => {
@@ -52,6 +61,7 @@
 		failedSummary = null;
 		passedSummary = false;
 		islandMastered = false;
+		codeFeedback = null;
 	});
 
 	const question = $derived(test?.questions[currentIndex]);
@@ -85,7 +95,9 @@
 		if (q.type === 'mcq' && q.options && q.correctAnswer !== undefined) {
 			return q.options[q.correctAnswer] ?? '';
 		}
-		if (q.type === 'code' && q.solutionCode) return `Expected to include: ${q.solutionCode}`;
+		if (q.type === 'code' && q.solutionCode) {
+			return `Expected pattern: ${q.solutionCode}`;
+		}
 		if (q.type === 'fill' && q.blankAnswer) return q.blankAnswer;
 		return '';
 	}
@@ -104,6 +116,7 @@
 		if (!showExplanation) return;
 		showExplanation = null;
 		submitted = false;
+		codeFeedback = null;
 		if (isLast) {
 			finish();
 			return;
@@ -144,6 +157,15 @@
 		failedSummary = null;
 		passedSummary = false;
 		islandMastered = false;
+		codeFeedback = null;
+	}
+
+	function evaluateCodeQuestion(q: Question): ReturnType<typeof validateCodeAnswer> {
+		const code = (answers[q.id] as string) ?? '';
+		if (!q.solutionCode) {
+			return { ok: false, reason: 'No solution configured for this question.' };
+		}
+		return validateCodeAnswer(code, q.solutionCode);
 	}
 
 	function isCorrect(q: Question): boolean {
@@ -156,14 +178,16 @@
 			const expected = (q.blankAnswer ?? '').trim().toLowerCase();
 			return expected.length > 0 && user === expected;
 		}
-		// code: user's code must contain the solution snippet to count correct
-		const code = (answers[q.id] as string) ?? '';
-		if (!q.solutionCode || code.trim().length === 0) return false;
-		return code.includes(q.solutionCode);
+		return evaluateCodeQuestion(q).ok;
 	}
 
 	function submit() {
 		if (!question) return;
+		codeFeedback = null;
+		if (question.type === 'code') {
+			const result = evaluateCodeQuestion(question);
+			if (!result.ok) codeFeedback = result.reason;
+		}
 		showExplanation = question.explanation;
 		submitted = true;
 	}
@@ -388,6 +412,11 @@
 							{:else}
 								<p class="font-semibold">❌ Incorrect</p>
 								<p class="mt-2 text-slate-700">{showExplanation}</p>
+								{#if codeFeedback && question.type === 'code'}
+									<p class="mt-3 rounded-md border border-red-200 bg-white/70 px-3 py-2 text-red-800">
+										{codeFeedback}
+									</p>
+								{/if}
 								{#if getCorrectAnswerText(question)}
 									<p class="mt-3 font-medium text-slate-800">
 										Correct answer: {getCorrectAnswerText(question)}

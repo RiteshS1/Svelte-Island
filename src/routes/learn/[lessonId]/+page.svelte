@@ -68,14 +68,15 @@
 
 	const htmlContent = $derived(lesson ? marked(lesson.markdownContent) : '');
 	const unlocked = $derived(lesson ? isLessonUnlocked(lesson, game.passedTests) : false);
-	const testForCheckpoint = $derived(
-		lesson?.type === 'checkpoint' && lesson.module
-			? lesson.module === 5
-				? getTestById('test-master')
-				: getTestForModule(lesson.module)
-			: null
+	const testForCheckpoint = $derived.by(() => {
+		if (!lesson || lesson.type !== 'checkpoint') return null;
+		// Module 5 SvelteKit checkpoint → Master Rune Test (not test-5)
+		if (lesson.module === 5) return getTestById('test-master');
+		return getTestForModule(lesson.module) ?? null;
+	});
+	const challengeHref = $derived(
+		testForCheckpoint ? `/test/${testForCheckpoint.id}` : '#'
 	);
-	const challengeHref = $derived(testForCheckpoint ? `/test/${testForCheckpoint.id}` : '#');
 
 	/** First unlocked lesson slug (for "Go to first lesson" when viewing locked). */
 	const firstUnlockedSlug = $derived(
