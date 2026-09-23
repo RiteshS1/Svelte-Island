@@ -483,49 +483,56 @@
 
 	<!-- Footer -->
 	<footer class="relative border-t border-slate-700/50 bg-slate-900 py-12 text-slate-300">
-		<div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
-			<div class="flex flex-col items-center gap-1 md:items-start">
-				<span
-					class="text-lg font-bold text-white"
-					style="font-family: 'Quicksand', sans-serif;"
-				>
-					Svelte-Island
-				</span>
-				<span class="text-sm">Made with ❤️ by Ritesh Sharma</span>
-			</div>
-			<div class="flex items-center gap-6">
-				<a
-					href="https://github.com/RiteshS1"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="text-slate-400 transition-colors hover:text-white"
-					aria-label="GitHub"
-				>
-					<Github class="h-5 w-5" />
-				</a>
-				<a
-					href="https://x.com/delphic_RS"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="text-slate-400 transition-colors hover:text-white"
-					aria-label="X"
-				>
-					<svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-						<path
-							d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"
-						/>
-					</svg>
-				</a>
-				<a
-					href="https://riteshh.in/"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="text-slate-400 transition-colors hover:text-white"
-					aria-label="Portfolio"
-				>
-					<Globe class="h-5 w-5" />
-				</a>
-			</div>
-		</div>
-	</footer>
+        <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 md:flex-row">
+            <div class="flex flex-col items-center gap-1 text-center md:items-start md:text-left">
+                <div class="flex items-center gap-2">
+                    <span
+                        class="text-lg font-bold text-white"
+                        style="font-family: 'Quicksand', sans-serif;"
+                    >
+                        Svelte-Island
+                    </span>
+                    <span class="rounded-md border border-sky-400/30 bg-sky-500/10 px-2 py-0.5 text-xs font-semibold text-sky-300">
+                        Built with Svelte 5
+                    </span>
+                </div>
+                <p class="mt-1 text-sm text-slate-400">
+                    Built by <a href="https://riteshh.in/" target="_blank" rel="noopener noreferrer" class="font-medium text-slate-200 underline decoration-slate-600 underline-offset-4 hover:text-white">Ritesh Sharma</a> while learning Svelte.
+                </p>
+            </div>
+            <div class="flex items-center gap-6">
+                <a
+                    href="https://github.com/RiteshS1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-slate-400 transition-colors hover:text-white"
+                    aria-label="GitHub"
+                >
+                    <Github class="h-5 w-5" />
+                </a>
+                <a
+                    href="https://x.com/riiteshhhhh"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-slate-400 transition-colors hover:text-white"
+                    aria-label="X"
+                >
+                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path
+                            d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.727-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+                        />
+                    </svg>
+                </a>
+                <a
+                    href="https://riteshh.in/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-slate-400 transition-colors hover:text-white"
+                    aria-label="Portfolio"
+                >
+                    <Globe class="h-5 w-5" />
+                </a>
+            </div>
+        </div>
+    </footer>
 </div>
