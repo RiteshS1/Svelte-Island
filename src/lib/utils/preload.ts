@@ -1,6 +1,6 @@
 /**
- * Preload classroom assets (models) so they are cached before the user enters the learn scene.
- * Call once when the app loads (e.g. after app-start loader) to warm the browser cache.
+ * Preload classroom assets (models) so they are cached before the 3D scene mounts.
+ * Call when entering /learn — not on landing — to avoid unused-preload warnings.
  */
 
 import { MODEL_PATHS } from '$lib/constants/scene';
@@ -19,6 +19,6 @@ export function preloadClassroomAssets(): void {
 	if (preloadStarted || typeof window === 'undefined') return;
 	preloadStarted = true;
 	for (const url of CLASSROOM_URLS) {
-		fetch(url).catch(() => {});
+		fetch(url, { credentials: 'same-origin', mode: 'cors' }).catch(() => {});
 	}
 }

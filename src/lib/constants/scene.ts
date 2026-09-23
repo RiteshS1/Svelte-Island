@@ -66,9 +66,6 @@ export function getPenguinPosition(modelType: PenguinModelType): [number, number
 export const SKY_COLOR_DAY = 0xe0f2fe;
 export const SKY_COLOR_NIGHT = 0x0f172a;
 
-/** @deprecated Use getSkyColor(skyPhase) or SKY_COLOR_DAY. Kept for backwards compatibility. */
-export const SKY_BACKGROUND_COLOR = SKY_COLOR_DAY;
-
 export type SkyPhase = 'day' | 'night';
 
 export function getSkyColor(skyPhase: SkyPhase): number {

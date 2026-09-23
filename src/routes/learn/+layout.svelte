@@ -3,12 +3,19 @@
 	import { browser } from '$app/environment';
 	import LearnSidebar from '$lib/components/layout/LearnSidebar.svelte';
 	import Snowfall from '$lib/components/Snowfall.svelte';
+	import { preloadClassroomAssets } from '$lib/utils/preload';
+	import { game } from '$lib/state/game.svelte';
 
 	let { children } = $props();
 	let ClassroomScene = $state<typeof import('$lib/components/3d/ClassroomScene.svelte').default | null>(null);
 	let show3D = $state(false);
 
+	$effect(() => {
+		game.requireUser();
+	});
+
 	onMount(() => {
+		preloadClassroomAssets();
 		const mq = window.matchMedia('(min-width: 768px)');
 		show3D = mq.matches;
 		const handler = () => {

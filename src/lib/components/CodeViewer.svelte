@@ -45,9 +45,10 @@
 			padding: { top: 12 }
 		});
 
-		if (!readOnly && (onValueChange || true)) {
-			editor.onDidChangeModelContent(() => {
-				const v = editor?.getValue() ?? '';
+		const ed = editor;
+		if (!readOnly && ed && (onValueChange || true)) {
+			ed.onDidChangeModelContent(() => {
+				const v = ed.getValue() ?? '';
 				value = v;
 				onValueChange?.(v);
 			});

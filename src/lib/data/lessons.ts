@@ -48,13 +48,7 @@ Think of a **live scoreboard**. When the score changes, the board updates everyw
 ## 4. Real-Life Usage
 
 Counters, like buttons, form fields, sidebar open/closed, theme (light/dark).
-
-\`\`\`svelte
-<script lang="ts">
-  let count = $state(0);
-</script>
-<button onclick={() => count++}>Clicks: {count}</button>
-\`\`\``,
+`,
 		initialCode: `<script lang="ts">
   let count = $state(0);
 </script>
@@ -84,14 +78,7 @@ Like an **Excel formula**. When the cells it references change, the result updat
 ## 4. Real-Life Usage
 
 Shopping cart total, filtered lists, formatted strings (e.g. full name from first + last).
-
-\`\`\`svelte
-<script lang="ts">
-  let count = $state(0);
-  let doubled = $derived(count * 2);
-</script>
-<p>Count: {count}, Doubled: {doubled}</p>
-\`\`\``,
+`,
 		initialCode: `<script lang="ts">
   let firstName = $state('Svelte');
   let lastName = $state('Island');
@@ -125,16 +112,7 @@ A **security guard** who reacts when something happens. Door opens → light on.
 ## 4. Real-Life Usage
 
 Syncing \`document.title\`, saving draft to \`localStorage\`, sending analytics, initializing third-party widgets when data changes.
-
-\`\`\`svelte
-<script lang="ts">
-  let count = $state(0);
-  $effect(() => {
-    document.title = \`Count: \${count}\`;
-  });
-</script>
-<button onclick={() => count++}>Count: {count}</button>
-\`\`\``,
+`,
 		initialCode: `<script lang="ts">
   let count = $state(0);
   $effect(() => {
@@ -191,14 +169,7 @@ Svelte's \`{#if} ... {:else} ... {/if}\` blocks render content conditionally. On
 ## 4. Real-Life Usage
 
 Auth (show content vs login form), empty states, error messages, feature flags.
-
-\`\`\`svelte
-{#if count > 0}
-  <p>Count is positive!</p>
-{:else}
-  <p>Zero or negative.</p>
-{/if}
-\`\`\``,
+`,
 		initialCode: `<script lang="ts">
   let loggedIn = $state(false);
 </script>
@@ -233,12 +204,7 @@ Auth (show content vs login form), empty states, error messages, feature flags.
 ## 4. Real-Life Usage
 
 Todo list, product grid, table rows, menu items, search results.
-
-\`\`\`svelte
-{#each items as item (item.id)}
-  <li>{item.name}</li>
-{/each}
-\`\`\``,
+`,
 		initialCode: `<script lang="ts">
   let items = $state([{ id: 1, name: 'Svelte' }, { id: 2, name: 'Island' }]);
 </script>
@@ -273,11 +239,7 @@ Use \`onclick\`, \`onkeydown\`, \`oninput\`, etc. (or \`on:click\` in legacy). P
 ## 4. Real-Life Usage
 
 Buttons, form submit, keyboard shortcuts, drag-and-drop, file input.
-
-\`\`\`svelte
-<button onclick={() => count++}>+1</button>
-<input oninput={(e) => name = e.currentTarget.value} />
-\`\`\``,
+`,
 		initialCode: `<script lang="ts">
   let count = $state(0);
 </script>

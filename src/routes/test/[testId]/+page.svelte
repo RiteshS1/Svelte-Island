@@ -12,6 +12,10 @@
 	const test = $derived(getTestById(testId));
 
 	$effect(() => {
+		game.requireUser();
+	});
+
+	$effect(() => {
 		if (!test) return;
 		const passed = game.passedTests;
 		if (test.moduleId >= 2 && !passed.includes(`test-${test.moduleId - 1}`)) {
@@ -27,6 +31,8 @@
 	let answers = $state<Record<string, number | string>>({});
 	let submitted = $state(false);
 	let showExplanation = $state<string | null>(null);
+	/** After Finish when not all answers are correct */
+	let failedSummary = $state<{ score: number; total: number } | null>(null);
 
 	// Reset state when switching to a different test (e.g. URL change)
 	$effect(() => {
@@ -35,6 +41,7 @@
 		answers = {};
 		submitted = false;
 		showExplanation = null;
+		failedSummary = null;
 	});
 
 	const question = $derived(test?.questions[currentIndex]);
@@ -63,27 +70,22 @@
 	}
 
 	function next() {
-		if (showExplanation) {
-			showExplanation = null;
-			submitted = false;
-			if (isLast) {
-				finish();
-				return;
-			}
-			currentIndex++;
-		} else if (question) {
-			const correct = isCorrect(question);
-			showExplanation = question.explanation;
-			if (!correct && !isLast) {
-				// allow next after a short moment
-			}
+		if (!showExplanation) return;
+		showExplanation = null;
+		submitted = false;
+		if (isLast) {
+			finish();
+			return;
 		}
+		currentIndex++;
 	}
 
 	function finish() {
 		if (!test) return;
-		const allCorrect = test.questions.every((q) => isCorrect(q));
+		const score = test.questions.filter((q) => isCorrect(q)).length;
+		const allCorrect = score === test.questions.length;
 		if (allCorrect) {
+			failedSummary = null;
 			game.showLoader('challenge-complete', '/assets/images/logo-with-fire-water.png');
 			game.passTest(test.id);
 			setTimeout(() => {
@@ -98,8 +100,16 @@
 				}
 			}, LOADER_SUCCESS_DURATION_MS);
 		} else {
-			submitted = true;
+			failedSummary = { score, total: test.questions.length };
 		}
+	}
+
+	function retryTest() {
+		currentIndex = 0;
+		answers = {};
+		submitted = false;
+		showExplanation = null;
+		failedSummary = null;
 	}
 
 	function isCorrect(q: Question): boolean {
@@ -120,23 +130,8 @@
 
 	function submit() {
 		if (!question) return;
-		const correct = isCorrect(question);
 		showExplanation = question.explanation;
-		if (!correct) {
-			submitted = false;
-			if (question.type === 'mcq') {
-				const { [question.id]: _, ...rest } = answers;
-				answers = rest;
-			}
-			return;
-		}
 		submitted = true;
-	}
-
-	function clearFillInput() {
-		if (!question || question.type !== 'fill') return;
-		const { [question.id]: _, ...rest } = answers;
-		answers = rest;
 	}
 </script>
 
@@ -149,6 +144,27 @@
 		<div class="rounded-xl bg-white p-8 shadow-lg">
 			<p class="text-slate-600">Test not found.</p>
 			<a href="/dashboard" class="mt-4 inline-block text-sky-600 underline">Back to Dashboard</a>
+		</div>
+	</div>
+{:else if failedSummary}
+	<div class="min-h-screen bg-gradient-to-b from-sky-300 via-sky-100 to-white px-4 py-8 sm:px-6 sm:py-12">
+		<div class="mx-auto max-w-2xl">
+			<div class="rounded-2xl border border-white/50 bg-white/60 p-6 shadow-lg backdrop-blur-sm sm:p-8">
+				<h1 class="text-xl font-bold text-slate-800 font-heading sm:text-2xl">
+					Not quite yet
+				</h1>
+				<p class="mt-3 text-slate-600">
+					You scored {failedSummary.score} / {failedSummary.total}. Pass every question to unlock the next module.
+				</p>
+				<div class="mt-6 flex flex-wrap gap-3">
+					<Button onclick={retryTest} class="bg-[#ff3e00] text-white hover:bg-[#ff3e00]/90">
+						Try again
+					</Button>
+					<a href="/dashboard">
+						<Button variant="outline">Back to Dashboard</Button>
+					</a>
+				</div>
+			</div>
 		</div>
 	</div>
 {:else}
@@ -232,16 +248,6 @@
 										Correct answer: {getCorrectAnswerText(question)}
 									</p>
 								{/if}
-								{#if question.type === 'fill'}
-									<Button
-										variant="outline"
-										size="sm"
-										class="mt-4 border-red-300 text-red-800 hover:bg-red-100"
-										onclick={clearFillInput}
-									>
-										Clear input
-									</Button>
-								{/if}
 							{/if}
 						</div>
 					{/if}
@@ -249,7 +255,7 @@
 			{/if}
 
 			<div class="mt-6 flex flex-wrap items-center justify-end gap-2">
-				{#if showExplanation && currentCorrect}
+				{#if showExplanation}
 					<Button onclick={next}>
 						{isLast ? 'Finish' : 'Next'}
 					</Button>
@@ -261,7 +267,7 @@
 							(question?.type === 'fill' && !String(answers[question?.id] ?? '').trim())
 						}
 					>
-						{isLast ? 'Submit' : 'Check & Next'}
+						{isLast ? 'Check answer' : 'Check'}
 					</Button>
 				{/if}
 			</div>

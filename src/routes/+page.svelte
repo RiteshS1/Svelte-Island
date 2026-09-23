@@ -3,7 +3,7 @@
 	import { gsap } from 'gsap';
 	import { ScrollTrigger } from 'gsap/ScrollTrigger';
 	import { Button } from '$lib/components/ui/button';
-	import { BookOpen, Code2, Trophy, Github, Twitter } from 'lucide-svelte';
+	import { BookOpen, Code2, Trophy, Github, Twitter, Globe } from 'lucide-svelte';
 
 	gsap.registerPlugin(ScrollTrigger);
 
@@ -15,6 +15,9 @@
 	let howCard1: HTMLElement;
 	let howCard2: HTMLElement;
 	let howCard3: HTMLElement;
+	let whySection: HTMLElement;
+	let faqSection: HTMLElement;
+	let recSection: HTMLElement;
 
 	const codeLines = `let count = $state(0);
 <button onclick={() => count++}>
@@ -23,6 +26,64 @@
 	let displayedCode = $state('');
 
 	const trustedStack = ['Svelte 5', 'Threlte', 'Tailwind', 'Vite', 'TypeScript'];
+
+	const whyPoints = [
+		{
+			title: 'Compiler-first',
+			body: 'Svelte ships less JavaScript by compiling away the framework. Your app stays fast without a virtual DOM tax.'
+		},
+		{
+			title: 'Runes reactivity',
+			body: '$state, $derived, and $effect make reactivity explicit and fine-grained—easier to reason about than magic stores.'
+		},
+		{
+			title: 'Less boilerplate',
+			body: 'Components look like HTML with a little script. You write less ceremony and more product.'
+		}
+	];
+
+	const faqs = [
+		{
+			q: 'Is Svelte-Island free?',
+			a: 'Yes. It is an open learning playground—no paywall, no account server. Progress stays in your browser.'
+		},
+		{
+			q: 'Do I need React experience?',
+			a: 'No. If you know HTML, CSS, and a bit of JavaScript, you can start. React knowledge helps but is not required.'
+		},
+		{
+			q: 'Is auth real?',
+			a: 'No—login is mock. You pick a display name; session and quiz progress are saved in localStorage only.'
+		},
+		{
+			q: 'What is a Rune?',
+			a: 'Runes are Svelte 5’s reactivity primitives ($state, $derived, $effect, $props). They replace much of the old store and export-let patterns.'
+		}
+	];
+
+	const recommendations = [
+		{
+			quote:
+				'We genuinely believe that Svelte offers a better way of building user interfaces, and we’re excited to see what you build.',
+			who: 'Rich Harris',
+			role: 'Creator of Svelte',
+			href: 'https://svelte.dev/blog/whats-new-in-svelte-may-2023'
+		},
+		{
+			quote:
+				'Svelte feels like writing the HTML and JavaScript you already know—then the compiler does the hard work.',
+			who: 'Community consensus',
+			role: 'Summarized from public Svelte advocacy',
+			href: 'https://svelte.dev/'
+		},
+		{
+			quote:
+				'If you’re tired of shipping megabytes of framework runtime, try a compiler that disappears at build time.',
+			who: 'Svelte docs ethos',
+			role: 'svelte.dev',
+			href: 'https://svelte.dev/docs/svelte/overview'
+		}
+	];
 
 	onMount(() => {
 		gsap.from([heroHeading, heroSub], {
@@ -47,7 +108,6 @@
 			ease: 'power2.out'
 		});
 
-		// Trusted Stack: fade in up
 		if (trustedTicker) {
 			gsap.from(trustedTicker, {
 				duration: 0.7,
@@ -89,6 +149,21 @@
 				ease: 'power2.out'
 			});
 		});
+
+		[whySection, faqSection, recSection].forEach((el) => {
+			if (!el) return;
+			gsap.from(el, {
+				scrollTrigger: {
+					trigger: el,
+					start: 'top 88%',
+					toggleActions: 'play none none none'
+				},
+				y: 36,
+				opacity: 0,
+				duration: 0.65,
+				ease: 'power2.out'
+			});
+		});
 	});
 </script>
 
@@ -105,6 +180,7 @@
 		class="relative mx-auto flex min-h-[85vh] max-w-6xl flex-col items-center justify-center px-6 pt-20 md:flex-row md:items-center md:gap-12"
 	>
 		<div class="flex flex-1 flex-col text-center md:text-left">
+			<p class="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-[#ff3e00]">Svelte-Island</p>
 			<h1
 				bind:this={heroHeading}
 				class="text-4xl font-bold tracking-tight text-slate-800 sm:text-5xl md:text-6xl lg:text-7xl"
@@ -154,7 +230,7 @@
 		</div>
 	</section>
 
-	<!-- How it Works (Bento) -->
+	<!-- How it Works -->
 	<section class="relative mx-auto max-w-6xl px-6 py-24">
 		<h2
 			class="mb-12 text-center text-3xl font-bold text-slate-800"
@@ -188,7 +264,7 @@
 					<h3 class="text-xl font-bold text-slate-800">2. Interactive Lab</h3>
 				</div>
 				<p class="mt-3 text-slate-600">
-					Write real code in the browser with Monaco.
+					Read real Svelte snippets in Monaco as you learn.
 				</p>
 			</div>
 			<div
@@ -202,8 +278,83 @@
 					<h3 class="text-xl font-bold text-slate-800">3. Earn XP</h3>
 				</div>
 				<p class="mt-3 text-slate-600">
-					Unlock badges and levels as you master Svelte.
+					Pass challenges to unlock modules and climb ranks.
 				</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- Why Svelte? -->
+	<section bind:this={whySection} class="relative border-t border-white/40 bg-white/30 py-24">
+		<div class="mx-auto max-w-3xl px-6">
+			<h2 class="text-center text-3xl font-bold text-slate-800">Why Svelte?</h2>
+			<p class="mx-auto mt-3 max-w-xl text-center text-slate-600">
+				Three reasons teams and indie builders pick Svelte for UI work.
+			</p>
+			<ul class="mt-12 space-y-10">
+				{#each whyPoints as point, i}
+					<li>
+						<p class="text-sm font-semibold uppercase tracking-wide text-[#ff3e00]">
+							{String(i + 1).padStart(2, '0')}
+						</p>
+						<h3 class="mt-1 text-xl font-bold text-slate-800">{point.title}</h3>
+						<p class="mt-2 text-slate-600">{point.body}</p>
+					</li>
+				{/each}
+			</ul>
+		</div>
+	</section>
+
+	<!-- FAQs -->
+	<section bind:this={faqSection} class="relative mx-auto max-w-3xl px-6 py-24">
+		<h2 class="text-center text-3xl font-bold text-slate-800">FAQs</h2>
+		<p class="mx-auto mt-3 max-w-xl text-center text-slate-600">
+			Quick answers before you start the expedition.
+		</p>
+		<div class="mt-10 space-y-3">
+			{#each faqs as item}
+				<details
+					class="group border-b border-slate-300/60 py-4 open:pb-5"
+				>
+					<summary
+						class="cursor-pointer list-none text-lg font-semibold text-slate-800 marker:content-none [&::-webkit-details-marker]:hidden"
+					>
+						<span class="flex items-center justify-between gap-4">
+							{item.q}
+							<span class="text-slate-400 transition group-open:rotate-45">+</span>
+						</span>
+					</summary>
+					<p class="mt-3 text-slate-600">{item.a}</p>
+				</details>
+			{/each}
+		</div>
+	</section>
+
+	<!-- Recommendations -->
+	<section bind:this={recSection} class="relative border-t border-white/40 bg-sky-50/50 py-24">
+		<div class="mx-auto max-w-3xl px-6">
+			<h2 class="text-center text-3xl font-bold text-slate-800">Why people recommend Svelte</h2>
+			<p class="mx-auto mt-3 max-w-xl text-center text-slate-600">
+				Attributed quotes from public Svelte sources—not fake embeds.
+			</p>
+			<div class="mt-12 space-y-10">
+				{#each recommendations as rec}
+					<blockquote class="border-l-2 border-[#ff3e00]/70 pl-5">
+						<p class="text-lg leading-relaxed text-slate-700">“{rec.quote}”</p>
+						<footer class="mt-3 text-sm text-slate-500">
+							— {rec.who}
+							<span class="text-slate-400"> · {rec.role}</span>
+							<a
+								href={rec.href}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="ml-2 text-[#ff3e00] underline-offset-2 hover:underline"
+							>
+								Source
+							</a>
+						</footer>
+					</blockquote>
+				{/each}
 			</div>
 		</div>
 	</section>
@@ -222,7 +373,7 @@
 			</div>
 			<div class="flex items-center gap-6">
 				<a
-					href="https://github.com"
+					href="https://github.com/RiteshS1"
 					target="_blank"
 					rel="noopener noreferrer"
 					class="text-slate-400 transition-colors hover:text-white"
@@ -231,13 +382,22 @@
 					<Github class="h-5 w-5" />
 				</a>
 				<a
-					href="https://twitter.com"
+					href="https://x.com/delphic_RS"
 					target="_blank"
 					rel="noopener noreferrer"
 					class="text-slate-400 transition-colors hover:text-white"
 					aria-label="Twitter / X"
 				>
 					<Twitter class="h-5 w-5" />
+				</a>
+				<a
+					href="https://riteshh.in/"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="text-slate-400 transition-colors hover:text-white"
+					aria-label="Portfolio"
+				>
+					<Globe class="h-5 w-5" />
 				</a>
 			</div>
 		</div>

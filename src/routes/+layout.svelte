@@ -8,18 +8,15 @@
 	import { AUDIO_PATHS } from '$lib/constants/audio';
 	import { LOADER_APP_START_DURATION_MS } from '$lib/constants/loader';
 	import { game } from '$lib/state/game.svelte';
-	import { preloadClassroomAssets } from '$lib/utils/preload';
-	import { DEFAULT_PENGUIN_PATH, MODEL_PATHS } from '$lib/constants/scene';
 	import favicon from '$lib/assets/favicon.png';
 
 	let { children } = $props();
 	let audioEl: HTMLAudioElement;
 
 	onMount(() => {
-		game.showLoader('app-start');
+		// Loader already visible from game state default (avoids hard-reload flash)
 		const t = setTimeout(() => {
 			game.hideLoader();
-			preloadClassroomAssets();
 		}, LOADER_APP_START_DURATION_MS);
 		return () => clearTimeout(t);
 	});
@@ -50,8 +47,6 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<link rel="preload" as="fetch" href={DEFAULT_PENGUIN_PATH} />
-	<link rel="preload" as="fetch" href={MODEL_PATHS.terrain} />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
 	<link
@@ -74,7 +69,7 @@
 	></audio>
 	<Toaster richColors position="top-right" />
 	<LoaderOverlay />
-	<main class="relative z-10">
+	<main class="relative z-10" class:invisible={game.loaderVisible && game.loaderVariant === 'app-start'} aria-hidden={game.loaderVisible && game.loaderVariant === 'app-start'}>
 		{@render children()}
 	</main>
 </div>

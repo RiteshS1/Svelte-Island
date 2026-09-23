@@ -11,7 +11,6 @@ export const LOADER_IMAGES = {
 
 /** Minimum 3 seconds for loader visibility */
 export const LOADER_APP_START_DURATION_MS = 3000;
-export const LOADER_TRANSITION_DURATION_MS = 3000;
 export const LOADER_SUCCESS_DURATION_MS = 3000;
 
 /** Brief loader when switching day/night sky to mask scene lag */

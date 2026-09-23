@@ -5,6 +5,10 @@
 	import CodeViewer from '$lib/components/CodeViewer.svelte';
 	import { BookOpen, Lock, LogOut, Sparkles } from 'lucide-svelte';
 
+	$effect(() => {
+		game.requireUser();
+	});
+
 	const sampleSnippet =
 		'let count = $state(0);\n<button onclick={() => count++}>\n  Clicks: {count}\n</button>';
 </script>
